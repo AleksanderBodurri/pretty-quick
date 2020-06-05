@@ -1,8 +1,8 @@
 {
   "name": "pretty-quick-extended",
-  "version": "1.0.1",
+  "version": "1.0.3",
   "description": "Pretty Quick Extended",
-  "repository": "https://github.com/AleksanderBodurri/pretty-quick",
+  "repository": "https://github.com/AleksanderBodurri/pretty-quick-extended",
   "author": "aleksanderbodurri",
   "main": "./dist",
   "bin": "./bin/pretty-quick.js",

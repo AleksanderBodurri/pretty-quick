@@ -5,7 +5,7 @@
 
 `npm install --save-dev prettier pretty-quick-extended`
 
-Create a `pqx-config.js` file in your root root directory.
+Create a `pqx-config.js` file in your root directory.
 
 ### Supported Options: 
  - REGEX_TO_READABLE_MAPPINGS: Map a regular expression to readable string. `pretty-quick-extended` will automatically sort import statements in javascript/typescript that match the given regex under the readable label
