@@ -1,124 +1,74 @@
-# `pretty-quick`
+# `pretty-quick-extended`
+   Provides various extensions to the pretty-quick package developed by Lucas Azzola. All credit to the original author https://github.com/azz
 
-[![Travis](https://img.shields.io/travis/azz/pretty-quick.svg?style=flat-square)](https://travis-ci.org/azz/pretty-quick)
-[![Prettier](https://img.shields.io/badge/code_style-prettier-ff69b4.svg?style=flat-square)](https://github.com/prettier/prettier)
-[![npm](https://img.shields.io/npm/v/pretty-quick.svg?style=flat-square)](https://npmjs.org/pretty-quick)
-[![semantic-release](https://img.shields.io/badge/%20%20%F0%9F%93%A6%F0%9F%9A%80-semantic--release-e10079.svg?style=flat-square)](https://github.com/semantic-release/semantic-release)
-[![License](https://img.shields.io/badge/license-MIT-blue.svg?style=flat-square)](LICENSE)
+# Install and Setup Config
 
-> Get Pretty Quick
+`npm install --save-dev prettier pretty-quick-extended`
 
-Runs [Prettier](https://prettier.io) on your changed files.
+Create a `pqx-config.js` file in your root root directory.
 
-![demo](./img/demo.gif)
+### Supported Options: 
+ - REGEX_TO_READABLE_MAPPINGS: Map a regular expression to readable string. `pretty-quick-extended` will automatically sort import statements in javascript/typescript that match the given regex under the readable label
 
-Supported source control managers:
-
-* Git
-* Mercurial
-
-## Install
-
-With `yarn`:
-
-```shellsession
-yarn add --dev prettier pretty-quick
+### Example Config
+```js
+module.exports =  {
+  REGEX_TO_READABLE_MAPPINGS: [
+    ['^@angular((?!material).)*$', 'Angular'], // Map '@angular/<path>' to 'Angular'
+    ['^@angular\/material.*', 'Material'],  // Map '@angular/material<path>' to 'Material'
+    ['\.component$', 'Components']  // Map '<path>.component' to 'Components'
+  ].map(([regexString, readableLabel]) => [new RegExp(regexString), readableLabel])
+};
 ```
+If an import doesn't match any regex in the config it will be grouped by its module name.
 
-With `npm`:
+## Setup Pre-commit Hook
 
-```shellsession
-npm install --save-dev prettier pretty-quick
-```
-
-## Usage
-
-With `yarn`:
-
-```shellsession
-yarn pretty-quick
-```
-
-With [`npx`](https://npm.im/npx):
-
-```shellsession
-npx pretty-quick
-```
-
-With `npm`:
-
-1. Add `"pretty-quick": "pretty-quick"` to the `"scripts"` section of `package.json`.
-2. `npm run pretty-quick`
-
-## Pre-Commit Hook
-
-You can run `pretty-quick` as a pre-commit hook using [`husky`](https://github.com/typicode/husky).
-
-> For Mercurial have a look at [`husky-hg`](https://github.com/TobiasTimm/husky-hg)
-
-```shellstream
-yarn add --dev husky
-```
-
-In `package.json`, add:
+In `package.json`:
 
 ```
 "husky": {
   "hooks": {
-    "pre-commit": "pretty-quick --staged"
+    "pre-commit": "pretty-quick-extended --staged"
   }
 }
 ```
+## Example Use Case
 
-![demo](./img/precommit.gif)
+### before commit (ugly imports)
+```ts
+import {NgModule} from
+ '@angular/core';
+import {HeaderComponent} from './header/header.component';
+import {
+CommonModule
+} from '@angular/common';
+import {MatButtonToggleModule} from '@angular/material/button-toggle';
+import {
+MatInputModule} from '@angular/material/input';
+import {RouterModule} from '@angular/router';
+import {MatChipsModule
+} from '@angular/material/chips';
+import {something} from 'some-other-module';
+```
 
-## CLI Flags
+### after commit (imports grouped and formatted)
+```ts
+// Angular
+import { NgModule } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { RouterModule } from '@angular/router';
 
-### `--staged` (only git)
+// Components
+import { HeaderComponent } from './header/header.component';
 
-Pre-commit mode. Under this flag only staged files will be formatted, and they will be re-staged after formatting.
+// Material
+import { MatButtonToggleModule } from '@angular/material/button-toggle';
+import { MatInputModule } from '@angular/material/input';
+import { MatChipsModule } from '@angular/material/chips';
 
-Partially staged files will not be re-staged after formatting and pretty-quick will exit with a non-zero exit code. The intent is to abort the git commit and allow the user to amend their selective staging to include formatting fixes.
+// some-other-module
+import { something } from 'some-other-module';
+```
 
-### `--no-restage` (only git)
-
-Use with the `--staged` flag to skip re-staging files after formatting.
-
-### `--branch`
-
-When not in `staged` pre-commit mode, use this flag to compare changes with the specified branch. Defaults to `master` (git) / `default` (hg) branch.
-
-### `--pattern`
-
-Filters the files for the given [minimatch](https://github.com/isaacs/minimatch) pattern.  
-For example `pretty-quick --pattern "**/*.*(js|jsx)"` or `pretty-quick --pattern "**/*.js" --pattern "**/*.jsx"`
-
-### `--verbose`
-
-Outputs the name of each file right before it is proccessed. This can be useful if Prettier throws an error and you can't identify which file is causing the problem.
-
-### `--bail`
-
-Prevent `git commit` if any files are fixed.
-
-### `--check`
-
-Check that files are correctly formatted, but don't format them. This is useful on CI to verify that all changed files in the current branch were correctly formatted.
-
-<!-- Undocumented = Unsupported :D
-
-### `--config`
-
-Path to a `.prettierrc` file.
-
-### `--since`
-
-A SCM revision such as a git commit hash or ref.
-
-For example `pretty-quick --since HEAD` will format only staged files.
-
--->
-
-## Configuration and Ignore Files
-
-`pretty-quick` will respect your [`.prettierrc`](https://prettier.io/docs/en/configuration), [`.prettierignore`](https://prettier.io/docs/en/ignore#ignoring-files), and [`.editorconfig`](http://editorconfig.org/) files, so there's no additional setup required. Configuration files will be found by searching up the file system. `.prettierignore` files are only found from the repository root and the working directory that the command was executed from.
+See [Pretty Quick README](https://github.com/azz/pretty-quick/blob/master/README.md) for additional information on `pretty-quick` usage.

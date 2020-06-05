@@ -2,6 +2,10 @@ import { readFileSync, writeFileSync } from 'fs';
 import * as prettier from 'prettier';
 import { join } from 'path';
 
+// Extensions
+import extensions from './extensions';
+//
+
 export default (
   directory,
   files,
@@ -18,6 +22,11 @@ export default (
       }),
       { filepath: file },
     );
+
+    // Extensions
+    extensions.forEach(extension => extension(directory, relative));
+    //
+
     const input = readFileSync(file, 'utf8');
 
     if (check) {
